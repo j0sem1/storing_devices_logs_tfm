@@ -14,7 +14,7 @@ struct usbinfo {
     string disconnectionTime;
     int idVendor;
     int idProduct;
-    string name;
+    string productName;
     string manufacturer;
     string serialNumber;
 };
@@ -54,19 +54,30 @@ void printMap(map<string, usbinfo> map){
         cout << "Connection time: " << it->second.connectionTime << endl;
         cout << "Disconnection time: " << it->second.disconnectionTime << endl;
         if (!it->second.idVendor){
-            cout << "id vendor not found" << endl;
+            cout << "Vendor ID not found" << endl;
         } else {
-            cout << "vendor id: " << it->second.idVendor << endl;
+            cout << "Vendor ID: " << it->second.idVendor << endl;
         }
         if (!it->second.idProduct){
-            cout << "id vendor not found" << endl;
+            cout << "Product ID not found" << endl;
         } else {
-            cout << "product id: " << it->second.idProduct << endl;
+            cout << "Product ID: " << it->second.idProduct << endl;
         }
-        cout << it->second.name << endl;
-        cout << it->second.manufacturer << endl;
-        cout << "Serial number: " << it->second.serialNumber << endl;
-        cout << endl << endl;
+        if (it->second.productName == ""){
+            cout << "Product name not found" << endl;
+        } else {
+            cout << "Product name: " << it->second.productName << endl;
+        }
+        if (it->second.manufacturer == ""){
+            cout << "Manufacturer not found" << endl;
+        } else {
+            cout << "Manufacturer: " << it->second.manufacturer << endl;
+        } if (it->second.serialNumber == ""){
+            cout << "Serial number not found" << endl;
+        } else {
+            cout << "Serial number: " << it->second.serialNumber << endl;
+        }
+        cout << endl;
     }
 }
 
@@ -89,10 +100,10 @@ int stringToInt(string stringToConvert){
 int main(){
 
     // Variables
-    string line, idVendor_string, idProduct_string, serialNumber_string;
-    regex usb_regex, date_regex, info_regex, disconnectionFound_regex, idVendorAndIdProduct_regex, idVendor_regex, idProduct_regex, serialNumber_regex;
+    string line, idVendor_string, idProduct_string, serialNumber_string, productName_string, manufacturer_string;
+    regex usb_regex, date_regex, info_regex, disconnectionFound_regex, idVendorAndIdProduct_regex, idVendor_regex, idProduct_regex, serialNumber_regex, productName_regex, manufacturer_regex;
     ifstream file;
-    cmatch id_found, connectionTime_found, disconnectionTime_found, info_found, idVendor_found, idProduct_found, serialNumber_found;
+    cmatch id_found, connectionTime_found, disconnectionTime_found, info_found, idVendor_found, idProduct_found, serialNumber_found, productName_found, manufacturer_found;
     usbinfo usb_info = usbinfo();
     // Create a map and its iterator
     map<string, usbinfo> usb_map;
@@ -106,7 +117,9 @@ int main(){
     idVendorAndIdProduct_regex = regex("USB device found");
     idVendor_regex = regex("idVendor=([0-9])*");
     idProduct_regex = regex("idProduct=([0-9])*");
-    serialNumber_regex = regex("SerialNumber: ([a-z]|[A-Z]|[0-9])*");
+    serialNumber_regex = regex("SerialNumber: .*");
+    productName_regex = regex("Product: .*");
+    manufacturer_regex = regex("Manufacturer: .*");
     
     // Open syslog file and save the pointer to it in "file" variable
     file.open("/var/log/syslog");
@@ -150,7 +163,7 @@ int main(){
                     regex_search(line.c_str(), idVendor_found, idVendor_regex);
                     // keep id product and save it
                     regex_search(line.c_str(), idProduct_found, idProduct_regex);
-                    // Recover usbinfo structure previously saved in map, and save inside it the disconnection Time
+                    // Recover usbinfo structure previously saved in map, and save inside it the id product and the vendor
                     it = usb_map.find(id_found.str());
                     usb_info = it->second;
                     // Save Vendor id and Product id into usb_info structure
@@ -163,17 +176,52 @@ int main(){
                     // Reset usb_info variable
                     usb_info = usbinfo();
                 
+                // If this line contains the serial number
                 } else if (regex_search(line.c_str(), serialNumber_regex)) {
                     // Keep id of usb used as key in map
                     regex_search(line.c_str(), id_found, usb_regex);
                     // keep id vendor and save it
                     regex_search(line.c_str(), serialNumber_found, serialNumber_regex);
-                    // Recover usbinfo structure previously saved in map, and save inside it the disconnection Time
+                    // Recover usbinfo structure previously saved in map, and save inside it the serial number
                     it = usb_map.find(id_found.str());
                     usb_info = it->second;
                     // Save Serial Number into usb_info structure
                     serialNumber_string = serialNumber_found.str();
                     usb_info.serialNumber = serialNumber_string.substr(serialNumber_string.find(":")+2, serialNumber_string.length());
+                    // Replace the previous usbinfo structure by the updated one in the map
+                    replaceInMap(&usb_map, id_found.str(), usb_info);
+                    // Reset usb_info variable
+                    usb_info = usbinfo();
+
+                // If this line contains the product name
+                } else if (regex_search(line.c_str(), productName_regex)) {
+                    // Keep id of usb used as key in map
+                    regex_search(line.c_str(), id_found, usb_regex);
+                    // Keep id vendor and save it
+                    regex_search(line.c_str(), productName_found, productName_regex);
+                    // Recover usbinfo structure previously saved in map, and save inside it the product name
+                    it = usb_map.find(id_found.str());
+                    usb_info = it->second;
+                    // Save product name into usb_info structure
+                    productName_string = productName_found.str();
+                    usb_info.productName = productName_string.substr(productName_string.find(":")+2, productName_string.length());
+                    // Replace the previous usbinfo structure by the updated one in the map
+                    replaceInMap(&usb_map, id_found.str(), usb_info);
+                    // Reset usb_info variable
+                    usb_info = usbinfo();
+
+                // If this line contains the manufacturer
+                } else if (regex_search(line.c_str(), manufacturer_regex)) {
+                    // Keep id of usb used as key in map
+                    regex_search(line.c_str(), id_found, usb_regex);
+                    // Keep id vendor and save it
+                    regex_search(line.c_str(), manufacturer_found, manufacturer_regex);
+                    // Recover usbinfo structure previously saved in map, and save inside it the manufacturer
+                    it = usb_map.find(id_found.str());
+                    usb_info = it->second;
+                    // Save manufacturer into usb_info structure
+                    manufacturer_string = manufacturer_found.str();
+                    usb_info.manufacturer = manufacturer_string.substr(manufacturer_string.find(":")+2, manufacturer_string.length());
                     // Replace the previous usbinfo structure by the updated one in the map
                     replaceInMap(&usb_map, id_found.str(), usb_info);
                     // Reset usb_info variable

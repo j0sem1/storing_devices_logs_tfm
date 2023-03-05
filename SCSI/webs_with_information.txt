@@ -1,0 +1,15 @@
+https://www.seagate.com/files/staticfiles/support/docs/manual/Interface%20manuals/100293068j.pdf
+
+https://www.kernel.org/doc/html/v4.13/driver-api/libata.html#c.ata_link_next
+
+https://es.wikipedia.org/wiki/Ioctl
+
+https://sg.danny.cz/sg/sg_io.html
+
+https://tldp.org/HOWTO/SCSI-Generic-HOWTO/sg_io.html
+
+https://tldp.org/HOWTO/archived/SCSI-Programming-HOWTO/SCSI-Programming-HOWTO-9.html
+
+https://forums.augi.com/showthread.php?32535-No-more-Inquiry-command
+
+https://forums.oracle.com/ords/apexds/post/scsi-inquiry-failing-on-physical-disk-directly-made-visible-1746

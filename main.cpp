@@ -3,8 +3,12 @@
 #include <string>
 #include <regex>
 #include <sstream> // this will allow you to use stringstream in your program
+#include <stdexcept>
+#include <stdio.h>
+#include <nlohmann/json.hpp>
 
 using namespace std;
+using nlohmann::json;
 
 
 // Structre which contains information of each USB
@@ -80,6 +84,31 @@ void printMap(map<string, usbinfo> map){
     }
 }
 
+void printJSON(nlohmann::json object){
+
+    cout << "||| " << object.at("logicalname") << " |||" << endl;
+    cout << "Type of disk: " << object.at("description") << endl;
+    cout << "Product ID: " << object.at("product") << endl;
+    cout << "Version: " << object.at("version") << endl;
+    cout << "Serial number: " << object.at("serial") << endl;
+    cout << "GUID: " << object.at("configuration").at("guid") << endl;
+    cout << endl;
+
+}
+
+void hardDrives(string cadena){
+    
+    nlohmann::json first = json::parse(cadena);
+
+    for (auto& el : first.items()){
+
+        if (el.value().at("id") == "disk"){
+            printJSON(el.value());
+        }
+
+    }
+}
+
 
 int stringToInt(string stringToConvert){
 
@@ -91,6 +120,28 @@ int stringToInt(string stringToConvert){
     ss << stringToConvert;
     // Place the converted value to the int variable
     ss >> result;
+
+    return result;
+}
+
+string exec(const char* cmd) {
+
+    char buffer[128];
+    string result = "";
+    FILE* pipe = popen(cmd, "r");
+
+    if (!pipe) throw std::runtime_error("popen() failed!");
+
+    try {
+        while (fgets(buffer, sizeof(buffer), pipe) != NULL) {
+            result += buffer;
+        }
+    } catch (...) {
+        pclose(pipe);
+        throw;
+    }
+
+    pclose(pipe);
 
     return result;
 }
@@ -230,6 +281,8 @@ int main(){
         }
 
         printMap(usb_map);
+
+        hardDrives(exec("sudo lshw -class disk -json 2>/dev/null"));
         
     }
 

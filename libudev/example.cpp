@@ -29,6 +29,11 @@ int main()
         }
 
         const char* serial = udev_device_get_property_value(device, "ID_SERIAL_SHORT");
+        const char* device_name = udev_device_get_property_value(device, "DEVNAME");
+        if (device_name)
+        {
+            std::cout << "Device name: " << device_name << std::endl;
+        }
         if (serial)
         {
             std::cout << "Path: " << path << std::endl;

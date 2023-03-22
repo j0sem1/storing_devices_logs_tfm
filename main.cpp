@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <stdio.h>
 #include <nlohmann/json.hpp>
+#include "hard_disks.h"
 
 using namespace std;
 using nlohmann::json;
@@ -159,6 +160,11 @@ int main(){
     map<string, usbinfo> usb_map;
     map<string, usbinfo>::iterator it;
 
+    // Hard disks
+    hardDiskInfo hard_disk_info;
+
+    initializeHardDiskInfoStructure(&hard_disk_info);
+
     // Initialization
     usb_regex = regex("usb [0-9]-[0-9]");
     date_regex = regex("[0-9]{2}:[0-9]{2}:[0-9]{2}");
@@ -282,7 +288,26 @@ int main(){
 
         printMap(usb_map);
 
-        hardDrives(exec("sudo lshw -class disk -json 2>/dev/null"));
+        //hardDrives(exec("sudo lshw -class disk -json 2>/dev/null"));
+
+        if (getInfoFromDisk("/dev/sda", &hard_disk_info)){
+            cout << "||| " << "/dev/sda" << " |||" << endl;
+            if (hard_disk_info.productName == ""){
+                cout << "Product name not found" << endl;
+            } else {
+                cout << "Product name: " << hard_disk_info.productName << endl;
+            }
+            if (hard_disk_info.manufacturer == ""){
+                cout << "Manufacturer not found" << endl;
+            } else {
+                cout << "Manufacturer: " << hard_disk_info.manufacturer << endl;
+            } if (hard_disk_info.serialNumber == ""){
+                cout << "Serial number not found" << endl;
+            } else {
+                cout << "Serial number: " << hard_disk_info.serialNumber << endl;
+            }
+            cout << endl;
+        }
         
     }
 

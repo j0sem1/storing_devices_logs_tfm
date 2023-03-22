@@ -4,7 +4,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
-#include <linux/hdreg.h>
+#include <linux/hdreg.h>    /* Contains hd_driveid structure */
 
 #define HDIO_GET_IDENTITY	0x030d	/* get IDE identification info */
 

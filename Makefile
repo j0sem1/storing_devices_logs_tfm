@@ -1,10 +1,13 @@
 all: get_devices
 
-get_devices: main.o hard_disks.o
-	g++ -o a.out main.o hard_disks.o
+get_devices: main.o usb.o hard_disk.o
+	g++ -o get_devices.out main.o usb.o hard_disk.o -static
 
-hard_disks.o: hard_disks.cpp hard_disks.h
-	g++ -c hard_disks.cpp
+usb.o: usb.cpp usb.h
+	g++ -c usb.cpp
+
+hard_disk.o: hard_disk.cpp hard_disk.h
+	g++ -c hard_disk.cpp
 
 main.o: main.cpp
 	g++ -c main.cpp

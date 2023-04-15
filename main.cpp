@@ -12,43 +12,51 @@
 #include <unistd.h>
 //#include <sys/types.h>
 
-using namespace std;
-using nlohmann::json;
 
+void printUSBsMap(std::map<std::string, usbInfo> usbs_map){
 
-void printUSBsMap(map<string, usbinfo> usbs_map){
-
-    std::map<string, usbinfo>::iterator it;
+    std::map<std::string, usbInfo>::iterator it;
 
     for (it = usbs_map.begin(); it != usbs_map.end(); ++it){
-        cout << "||| " << it->first << " |||" << endl;
-        cout << "Connection time: " << it->second.connectionTime << endl;
-        cout << "Disconnection time: " << it->second.disconnectionTime << endl;
+        std::cout << "||| " << it->first << " |||" << std::endl;
+
+        std::list<std::string>::iterator it_time;
+
+        std::cout << "Connection times:" << std::endl;
+        for (it_time = it->second.connectionTimes.begin(); it_time != it->second.connectionTimes.end(); ++it_time){
+            std::cout << "   " << (*it_time) << std::endl;
+        }
+
+        std::cout << "Disconnection times:" << std::endl;
+        for (it_time = it->second.disconnectionTimes.begin(); it_time != it->second.disconnectionTimes.end(); ++it_time){
+            std::cout << "   " << (*it_time) << std::endl;
+        }
+        
         if (!it->second.idVendor){
-            cout << "Vendor ID not found" << endl;
+            std::cout << "Vendor ID not found" << std::endl;
         } else {
-            cout << "Vendor ID: " << it->second.idVendor << endl;
+            std::cout << "Vendor ID: " << it->second.idVendor << std::endl;
         }
         if (!it->second.idProduct){
-            cout << "Product ID not found" << endl;
+            std::cout << "Product ID not found" << std::endl;
         } else {
-            cout << "Product ID: " << it->second.idProduct << endl;
+            std::cout << "Product ID: " << it->second.idProduct << std::endl;
         }
         if (it->second.productName == ""){
-            cout << "Product name not found" << endl;
+            std::cout << "Product name not found" << std::endl;
         } else {
-            cout << "Product name: " << it->second.productName << endl;
+            std::cout << "Product name: " << it->second.productName << std::endl;
         }
-        if (it->second.manufacturer == ""){
-            cout << "Manufacturer not found" << endl;
+        if (it->second.manufacturer == "" || it->second.manufacturer.find_first_not_of(' ') == std::string::npos){
+            std::cout << "Manufacturer not found" << std::endl;
         } else {
-            cout << "Manufacturer: " << it->second.manufacturer << endl;
+            std::cout << "Manufacturer: " << it->second.manufacturer << std::endl;
         } if (it->second.serialNumber == ""){
-            cout << "Serial number not found" << endl;
+            std::cout << "Serial number not found" << std::endl;
         } else {
-            cout << "Serial number: " << it->second.serialNumber << endl;
+            std::cout << "Serial number: " << it->second.serialNumber << std::endl;
         }
-        cout << endl;
+        std::cout << std::endl;
     }
 }
 
@@ -71,28 +79,28 @@ void printDisksMap(std::map<std::string, hardDiskInfo> disks_map){
 
     for (it = disks_map.begin(); it != disks_map.end(); ++it){
         if (!it->second.isEmpty){
-            cout << "||| " << it->first << " |||" << endl;
+            std::cout << "||| " << it->first << " |||" << std::endl;
             if (it->second.product == ""){
-                cout << "Product not found" << endl;
+                std::cout << "Product not found" << std::endl;
             } else {
-                cout << "Product: " << it->second.product << endl;
+                std::cout << "Product: " << it->second.product << std::endl;
             }
             if (it->second.version == ""){
-                cout << "Version not found" << endl;
+                std::cout << "Version not found" << std::endl;
             } else {
-                cout << "Version: " << it->second.version << endl;
+                std::cout << "Version: " << it->second.version << std::endl;
             }
             if (it->second.serialNumber == ""){
-                cout << "Serial number not found" << endl;
+                std::cout << "Serial number not found" << std::endl;
             } else {
-                cout << "Serial number: " << it->second.serialNumber << endl;
+                std::cout << "Serial number: " << it->second.serialNumber << std::endl;
             }
             if (it->second.size == 0){
-                cout << "Size not found" << endl;
+                std::cout << "Size not found" << std::endl;
             } else {
-                cout << "Size: " << humanReadableByteCount(it->second.size, true) << endl;
+                std::cout << "Size: " << humanReadableByteCount(it->second.size, true) << std::endl;
             }
-            cout << endl;
+            std::cout << std::endl;
         }
     }
 
@@ -116,7 +124,7 @@ int main(){
 
     printDisksMap(getDisksInfo());
     
-    example();
+    //example();
 
     return 0;
 }

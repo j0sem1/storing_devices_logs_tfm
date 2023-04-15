@@ -3,19 +3,20 @@
 
 #include <regex>    // For regex and map
 #include <string>
+#include <list> /* For lists */
 
 // Structre which contains information of each USB
-struct usbinfo {
-    std::string connectionTime;
-    std::string disconnectionTime;
-    int idVendor;
-    int idProduct;
-    std::string productName;
-    std::string manufacturer;
-    std::string serialNumber;
+struct usbInfo {
+    std::list<std::string> connectionTimes;
+    std::list<std::string> disconnectionTimes;
+    int idVendor = 0;
+    int idProduct = 0;
+    std::string productName = "";
+    std::string manufacturer = "";
+    std::string serialNumber = "";
 };
 
-std::map<std::string, usbinfo> getUSBsInfo();
+std::map<std::string, usbInfo> getUSBsInfo();
 
 void example();
 

@@ -7,9 +7,6 @@
 //#include <fstream>
 #include <dirent.h> // For DIR type and functions
 
-// TODO: Delte
-//#include <iostream>
-//#include <stdio.h>
 
 #ifndef BLKGETSIZE
 #define BLKGETSIZE _IO(0x12,96)                   /* return device size */
@@ -24,6 +21,7 @@
 #ifndef BLKPBSZGET
 #define BLKPBSZGET _IO(0x12,123)
 #endif
+
 
 std::string unsignedCharToString(unsigned char* src_char_array, int size){
 
@@ -46,7 +44,6 @@ void initializeHardDiskInfoStructure(hardDiskInfo* hard_disk_info){
     hard_disk_info->version = "";
     hard_disk_info->size = 0;
 }
-
 
 hardDiskInfo getInfoFromDisk(std::string device_name){
 

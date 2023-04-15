@@ -6,8 +6,6 @@
 #include <regex>    // For regex and map
 #include <set> // For sets
 
-//using namespace std;
-
 #define HDIO_GET_IDENTITY	0x030d	/* get IDE identification info */
 
 // Structre which contains information of hard disks

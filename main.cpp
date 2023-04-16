@@ -4,7 +4,7 @@
 //#include <regex>
 #include <stdexcept>
 #include <stdio.h>
-#include <nlohmann/json.hpp>
+//#include <nlohmann/json.hpp>
 #include "hard_disk.h"
 #include "usb.h"
 #include <set> // For sets
@@ -12,13 +12,16 @@
 #include <unistd.h>
 //#include <sys/types.h>
 
+#include <math.h>
+
 
 void printUSBsMap(std::map<std::string, usbInfo> usbs_map){
 
     std::map<std::string, usbInfo>::iterator it;
+    int n = 1;
 
     for (it = usbs_map.begin(); it != usbs_map.end(); ++it){
-        std::cout << "||| " << it->first << " |||" << std::endl;
+        std::cout << "||| USB " << n << " |||" << std::endl;
 
         std::list<std::string>::iterator it_time;
 
@@ -57,6 +60,8 @@ void printUSBsMap(std::map<std::string, usbInfo> usbs_map){
             std::cout << "Serial number: " << it->second.serialNumber << std::endl;
         }
         std::cout << std::endl;
+
+        n++;
     }
 }
 
@@ -89,6 +94,11 @@ void printDisksMap(std::map<std::string, hardDiskInfo> disks_map){
                 std::cout << "Version not found" << std::endl;
             } else {
                 std::cout << "Version: " << it->second.version << std::endl;
+            }
+            if (it->second.firmware == ""){
+                std::cout << "Firmware version not found" << std::endl;
+            } else {
+                std::cout << "Firmware version: " << it->second.firmware << std::endl;
             }
             if (it->second.serialNumber == ""){
                 std::cout << "Serial number not found" << std::endl;

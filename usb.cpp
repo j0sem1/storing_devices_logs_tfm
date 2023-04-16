@@ -1,6 +1,6 @@
 #include "usb.h"
 #include <fstream>
-#include <tabulate/table.hpp> /* For print tables */
+//#include <tabulate/table.hpp> /* For print tables */
 
 
 // Structre which contains information of USBs interfaces
@@ -28,7 +28,7 @@ void initializeUsbInterface(usbInterface* usb_interface) {
     usb_interface->serialNumber = "";
 }
 
-
+/*
 void example() {
     tabulate::Table table;
 
@@ -39,6 +39,7 @@ void example() {
 
     std::cout << table << std::endl;
 }
+*/
 
 
 int stringToInt(std::string stringToConvert){

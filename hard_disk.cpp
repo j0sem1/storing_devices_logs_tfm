@@ -6,6 +6,7 @@
 #include <regex> /* memset() function and regex operations */
 //#include <fstream>
 #include <dirent.h> // For DIR type and functions
+#include <linux/nvme_ioctl.h> // For 'NVME_IOCTL_ADMIN_CMD' and 'nvme_admin_cmd' structure
 
 
 #ifndef BLKGETSIZE
@@ -62,46 +63,81 @@ hardDiskInfo getInfoFromDisk(std::string device_name){
 
     // Get disk information with HDIO_GET_IDENTITY option in ioctl() function
     if (ioctl(diskFile, HDIO_GET_IDENTITY, &drive_info) != 0){
-        close(diskFile);
-        return hard_disk_info;
-    }
-    
-    hard_disk_info.isEmpty = false;
 
-    hard_disk_info.serialNumber = unsignedCharToString(drive_info.serial_no, sizeof(drive_info.serial_no));
-    hard_disk_info.product = unsignedCharToString(drive_info.model, sizeof(drive_info.model));
-    hard_disk_info.version = unsignedCharToString(drive_info.fw_rev, sizeof(drive_info.fw_rev));
+        // TODO: Provisional
+        char buf[4096] = {0};
+        nvme_admin_cmd mib = {0};
+        mib.opcode = 0x06; // identify
+        mib.nsid = 0;
+        mib.addr = (__u64) buf;
+        mib.data_len = sizeof(buf);
+        mib.cdw10 = 1; // controller
+
+        if (ioctl(diskFile, NVME_IOCTL_ADMIN_CMD, &mib) != 0) {
+            close(diskFile);
+            return hard_disk_info;
+        }
+
+        hard_disk_info.isEmpty = false;
+
+        std::string serialNumber(&buf[4], &buf[4] + 20);
+        std::string product(&buf[24], &buf[24] + 40);
+        std::string firmware(&buf[64], &buf[64] + 8);
+
+        hard_disk_info.serialNumber = serialNumber;
+        hard_disk_info.product = product;
+        hard_disk_info.firmware = firmware;
+
+        //printf("%.20s", &buf[4]); // Serial number
+        //printf(, "%.40s", &buf[24]); // Model number
+        //printf(, "%.8s", &buf[64]); // Firmware Revision
+        //std::cout << std::endl;
+
+        //close(diskFile);
+        //return hard_disk_info;
+    } else {
+
+        hard_disk_info.isEmpty = false;
+
+        hard_disk_info.serialNumber = unsignedCharToString(drive_info.serial_no, sizeof(drive_info.serial_no));
+        hard_disk_info.product = unsignedCharToString(drive_info.model, sizeof(drive_info.model));
+        hard_disk_info.version = unsignedCharToString(drive_info.fw_rev, sizeof(drive_info.fw_rev));
+
+    }
 
     // Get disk information with HDIO_GET_IDENTITY option in ioctl() function
     if (ioctl(diskFile, BLKGETSIZE, &drive_info) != 0){
         close(diskFile);
         return hard_disk_info;
-    }
-
-    unsigned long long bytes = 0;
-    long size = 0;
-    int sectsize = 0;
-    int physsectsize = 0;
-
-    // BLKGETSIZE64 Get the size of the block device /dev/sd_. It produces a 64-bit result which is the size in bytes.
-    if (ioctl(diskFile, BLKGETSIZE64, &bytes) == 0){
-        hard_disk_info.size = bytes;
     } else {
-        /*
-            There is another ioctl with similar functionality to BLKGETSIZE64 called BLKGETSIZE.
-            It returns the device size as a number of 512-byte blocks, but because it does so in the form of an unsigned long it may fail if the size is 2TB or greater.
-            For this reason it is better to use BLKGETSIZE64 where possible, but if you require compatibility with very old versions of Linux (prior to 2.4.10)
-            then it may be appropriate to use BLKGETSIZE as a fallback.
-        */
-        if (ioctl(diskFile, BLKSSZGET, &sectsize) < 0){
-            sectsize = 0;
+
+        // TODO: Provisional
+        unsigned long long bytes = 0;
+        long size = 0;
+        int sectsize = 0;
+        int physsectsize = 0;
+
+        // BLKGETSIZE64 Get the size of the block device /dev/sd_. It produces a 64-bit result which is the size in bytes.
+        if (ioctl(diskFile, BLKGETSIZE64, &bytes) == 0){
+            hard_disk_info.size = bytes;
         } else {
+            /*
+                There is another ioctl with similar functionality to BLKGETSIZE64 called BLKGETSIZE.
+                It returns the device size as a number of 512-byte blocks, but because it does so in the form of an unsigned long it may fail if the size is 2TB or greater.
+                For this reason it is better to use BLKGETSIZE64 where possible, but if you require compatibility with very old versions of Linux (prior to 2.4.10)
+                then it may be appropriate to use BLKGETSIZE as a fallback.
+            */
+            if (ioctl(diskFile, BLKSSZGET, &sectsize) < 0){
+                sectsize = 0;
+            } else {
+            }
+            if (ioctl(diskFile, BLKGETSIZE, &size) == 0){
+            }
+            if ((size > 0) && (sectsize > 0)){
+                hard_disk_info.size = (unsigned long long) size * (unsigned long long) sectsize;
+            }
         }
-        if (ioctl(diskFile, BLKGETSIZE, &size) == 0){
-        }
-        if ((size > 0) && (sectsize > 0)){
-            hard_disk_info.size = (unsigned long long) size * (unsigned long long) sectsize;
-        }
+
     }
 
     return hard_disk_info;
@@ -134,7 +170,7 @@ std::set<std::string> getDisksSet(){
     std::cmatch disk_found;
     std::regex sd_regex;
 
-    sd_regex = std::regex("sd[a-z]");
+    sd_regex = std::regex("(sd[a-z])|(nvme[0-9][a-z][0-9])");
 
     if ((dir = opendir("/dev/")) != NULL){
 

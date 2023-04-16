@@ -16,6 +16,7 @@ struct hardDiskInfo {
     //std::string manufacturer;
     std::string serialNumber;
     std::string version;
+    std::string firmware;
     unsigned long long size;
 };
 

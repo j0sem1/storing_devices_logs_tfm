@@ -1,6 +1,5 @@
 #include "usb.h"
 #include <fstream>
-//#include <tabulate/table.hpp> /* For print tables */
 
 
 // Structre which contains information of USBs interfaces
@@ -16,6 +15,7 @@ struct usbInterface {
     std::string serialNumber;
 };
 
+
 void initializeUsbInterface(usbInterface* usb_interface) {
     usb_interface->isEmpty = true;
     usb_interface->isStorageDevice = false;
@@ -27,19 +27,6 @@ void initializeUsbInterface(usbInterface* usb_interface) {
     usb_interface->manufacturer = "";
     usb_interface->serialNumber = "";
 }
-
-/*
-void example() {
-    tabulate::Table table;
-
-    table.add_row({""});
-
-    table[0][0].format().width(20);
-    table[0][1].format().width(50);
-
-    std::cout << table << std::endl;
-}
-*/
 
 
 int stringToInt(std::string stringToConvert){
@@ -55,6 +42,7 @@ int stringToInt(std::string stringToConvert){
 
     return result;
 }
+
 
 std::map<std::string, usbInfo>::iterator replaceInUSBsMap(std::map<std::string, usbInfo>* map, std::string key, usbInfo usb_info_new){
 

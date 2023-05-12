@@ -87,14 +87,8 @@ hardDiskInfo getInfoFromDisk(std::string device_name){
         hard_disk_info.serialNumber = serialNumber;
         hard_disk_info.product = product;
         hard_disk_info.firmware = firmware;
-
-        //printf("%.20s", &buf[4]); // Serial number
-        //printf(, "%.40s", &buf[24]); // Model number
-        //printf(, "%.8s", &buf[64]); // Firmware Revision
-        //std::cout << std::endl;
-
-        //close(diskFile);
-        //return hard_disk_info;
+        hard_disk_info.diskType = "NVME";
+        
     } else {
 
         hard_disk_info.isEmpty = false;
@@ -102,6 +96,7 @@ hardDiskInfo getInfoFromDisk(std::string device_name){
         hard_disk_info.serialNumber = unsignedCharToString(drive_info.serial_no, sizeof(drive_info.serial_no));
         hard_disk_info.product = unsignedCharToString(drive_info.model, sizeof(drive_info.model));
         hard_disk_info.version = unsignedCharToString(drive_info.fw_rev, sizeof(drive_info.fw_rev));
+        hard_disk_info.diskType = "ATA";
 
     }
 

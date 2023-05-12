@@ -18,6 +18,4 @@ struct usbInfo {
 
 std::map<std::string, usbInfo> getUSBsInfo();
 
-void example();
-
 #endif

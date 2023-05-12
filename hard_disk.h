@@ -11,6 +11,7 @@
 // Structre which contains information of hard disks
 struct hardDiskInfo {
     bool isEmpty;
+    std::string diskType;
     //int idVendor;¡
     std::string product;
     //std::string manufacturer;

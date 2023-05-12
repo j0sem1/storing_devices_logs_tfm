@@ -7,6 +7,7 @@
 //#include <nlohmann/json.hpp>
 #include "hard_disk.h"
 #include "usb.h"
+#include "output.h"
 #include <set> // For sets
 
 #include <unistd.h>
@@ -65,19 +66,6 @@ void printUSBsMap(std::map<std::string, usbInfo> usbs_map){
     }
 }
 
-// Get from: https://gist.github.com/haohaozaici/7fddba2d7f1038bd578cb6acf5c57ac0
-// si - international system of units   
-std::string humanReadableByteCount(unsigned long long bytes, bool si) {
-    int unit = si ? 1000 : 1024;
-    if (bytes < unit)
-        return bytes + " B";
-    int exp = (int) (log(bytes) / log(unit));
-    std::string pre = ((std::string) (si ? "kMGTPE" : "KMGTPE"))[exp-1] + ((std::string) (si ? "" : "i"));
-    char result[100];
-    sprintf(result, "%.1llu %sB", bytes / (unsigned long long) pow(unit, exp), pre.c_str());
-    return result;
-}
-
 void printDisksMap(std::map<std::string, hardDiskInfo> disks_map){
 
     std::map<std::string, hardDiskInfo>::iterator it;
@@ -85,6 +73,7 @@ void printDisksMap(std::map<std::string, hardDiskInfo> disks_map){
     for (it = disks_map.begin(); it != disks_map.end(); ++it){
         if (!it->second.isEmpty){
             std::cout << "||| " << it->first << " |||" << std::endl;
+            std::cout << "Disk interface: " << it->second.diskType << std::endl;
             if (it->second.product == ""){
                 std::cout << "Product not found" << std::endl;
             } else {
@@ -133,8 +122,21 @@ int main(){
     printUSBsMap(getUSBsInfo());
 
     printDisksMap(getDisksInfo());
+
+    /*
+    std::cout << std::endl;
+    std::cout << "--------------------------------" << std::endl;
+    std::cout << std::endl;
     
-    //example();
+    printUSBsInformation();
+    */
+
+    //printDisksInformation();
+
+    //test2();
+
+    //printHTML_first();
+    printHTML(getUSBsInfo(), getDisksInfo());
 
     return 0;
 }

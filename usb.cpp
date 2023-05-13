@@ -200,7 +200,7 @@ bool checkIfDeviceDisconnected(std::string line, std::map<std::string, usbInterf
     usbInterface usb_interface_element;
 
     std::regex disconnectionFound_regex = std::regex("USB disconnect");
-    std::regex date_regex = std::regex("[0-9]{2}:[0-9]{2}:[0-9]{2}");
+    std::regex date_regex = std::regex("([A-Z]|[a-z]){3}.*[1-31].*[0-9]{2}:[0-9]{2}:[0-9]{2}");
     std::regex usb_regex = std::regex("usb [0-9]-[0-9]");
     std::cmatch regex_found;
     std::cmatch usb_regex_found;

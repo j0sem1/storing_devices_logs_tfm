@@ -1,5 +1,5 @@
-#CFLAGS = -Wall -Werror -Wextra
-CFLAGS = -Wall -Wextra
+CFLAGS = -Wall -Werror -Wextra
+#CFLAGS = -Wall -Wextra
 CC = g++
 
 all: get_devices
@@ -18,6 +18,3 @@ hard_disk.o: hard_disk.cpp hard_disk.h
 
 main.o: main.cpp
 	$(CC) $(CFLAGS) -c main.cpp
-
-#tz.o: tz/tz.cpp tz/date/tz.h tz/date/date.h tz/date/tz_private.h
-#	g++ $(CFLAGS) -c tz/tz.cpp -Itz/

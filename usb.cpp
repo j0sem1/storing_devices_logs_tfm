@@ -123,7 +123,7 @@ bool checkIfNewDeviceConnected(std::string line, std::map<std::string, usbInterf
     usbInterface usb_interface_element;
 
     std::regex new_usb_regex = std::regex("usb [0-9]-[0-9]: new");
-    std::regex date_regex = std::regex("[0-9]{2}:[0-9]{2}:[0-9]{2}");
+    std::regex date_regex = std::regex("([A-Z]|[a-z]){3}.*[1-31].*[0-9]{2}:[0-9]{2}:[0-9]{2}");
     std::cmatch regex_found;
 
     std::string interface_id;

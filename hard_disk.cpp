@@ -23,6 +23,8 @@
 #define BLKPBSZGET _IO(0x12,123)
 #endif
 
+#define NVME_MAX_METADATA_SIZE 256
+
 
 std::string unsignedCharToString(unsigned char* src_char_array, int size){
 
@@ -46,6 +48,33 @@ void initializeHardDiskInfoStructure(hardDiskInfo* hard_disk_info){
     hard_disk_info->size = 0;
 }
 
+#include <cstring>
+
+nvme_passthru_cmd initialize_nvme_passthru_cmd() {
+    nvme_passthru_cmd cmd = {
+        .opcode = 0x00,
+        .flags = 0,
+        .rsvd1 = 0,
+        .nsid = 0,
+        .cdw2 = 0,
+        .cdw3 = 0,
+        .metadata = 0, // allocate a zero-filled memory block
+        .addr = 0,
+        .metadata_len = 0,
+        .data_len = 0,
+        .cdw10 = 0,
+        .cdw11 = 0,
+        .cdw12 = 0,
+        .cdw13 = 0,
+        .cdw14 = 0,
+        .cdw15 = 0,
+        .timeout_ms = 0,
+        .result = 0
+    };
+    return cmd;
+}
+
+
 hardDiskInfo getInfoFromDisk(std::string device_name){
 
     hd_driveid drive_info;
@@ -66,7 +95,7 @@ hardDiskInfo getInfoFromDisk(std::string device_name){
 
         // TODO: Provisional
         char buf[4096] = {0};
-        nvme_admin_cmd mib = {0};
+        nvme_admin_cmd mib = initialize_nvme_passthru_cmd();
         mib.opcode = 0x06; // identify
         mib.nsid = 0;
         mib.addr = (__u64) buf;
@@ -110,7 +139,6 @@ hardDiskInfo getInfoFromDisk(std::string device_name){
         unsigned long long bytes = 0;
         long size = 0;
         int sectsize = 0;
-        int physsectsize = 0;
 
         // BLKGETSIZE64 Get the size of the block device /dev/sd_. It produces a 64-bit result which is the size in bytes.
         if (ioctl(diskFile, BLKGETSIZE64, &bytes) == 0){
@@ -155,10 +183,7 @@ std::set<std::string> getDisksSet(){
 
     DIR *dir;
     struct dirent *ent;
-    int n_disks = 0;
     std::string disks_string = "";
-    //std::string *disks;
-    char *ptr;
 
     std::set<std::string> disks;
 

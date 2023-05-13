@@ -9,8 +9,8 @@ std::string humanReadableByteCount(unsigned long long bytes, bool si);
 
 void printHTML(std::map<std::string, usbInfo> usbs_map, std::map<std::string, hardDiskInfo> disks_map);
 
-void test2();
+void printUSBsMapInTerminal(std::map<std::string, usbInfo> usbs_map);
 
-void printHTML_first();
+void printDisksMapInTerminal(std::map<std::string, hardDiskInfo> disks_map);
 
 #endif

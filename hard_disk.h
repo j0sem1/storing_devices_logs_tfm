@@ -12,9 +12,7 @@
 struct hardDiskInfo {
     bool isEmpty;
     std::string diskType;
-    //int idVendor;¡
     std::string product;
-    //std::string manufacturer;
     std::string serialNumber;
     std::string version;
     std::string firmware;

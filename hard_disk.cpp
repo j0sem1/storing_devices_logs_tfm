@@ -93,7 +93,6 @@ hardDiskInfo getInfoFromDisk(std::string device_name){
     // Get disk information with HDIO_GET_IDENTITY option in ioctl() function
     if (ioctl(diskFile, HDIO_GET_IDENTITY, &drive_info) != 0){
 
-        // TODO: Provisional
         char buf[4096] = {0};
         nvme_admin_cmd mib = initialize_nvme_passthru_cmd();
         mib.opcode = 0x06; // identify
@@ -135,7 +134,6 @@ hardDiskInfo getInfoFromDisk(std::string device_name){
         return hard_disk_info;
     } else {
 
-        // TODO: Provisional
         unsigned long long bytes = 0;
         long size = 0;
         int sectsize = 0;

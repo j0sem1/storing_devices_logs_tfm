@@ -309,12 +309,7 @@ bool checkIfInformationAboutDeviceFound(std::string line, std::map<std::string, 
             // If this line contains the id of the product and of the Vendor
             if (regex_search(line.c_str(), idVendorAndIdProduct_regex)) {
 
-                // TODO
-                /*
                 // Save Vendor id and Product id into usb_info structure
-                idVendor_string = idVendor_found.str();
-                idProduct_string = idProduct_found.str();
-                */
 
                 // keep id vendor and save it
                 regex_search(line.c_str(), regex_found, idVendor_regex);

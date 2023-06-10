@@ -195,7 +195,7 @@ void printHTML(std::map<std::string, usbInfo> usbs_map, std::map<std::string, ha
 
         std::ostringstream usb_info_table_stringstream;
         usb_info_table_stringstream << "<table align=\"center\"><tr style=\"background-color:#dadada;\"><th style=\"font-size:20px;\">USB " << usb_iterator
-            << "</th><th style=\"color: " << usb_connected   // TODO
+            << "</th><th style=\"color: " << usb_connected
             << "</th></tr><tr><td style=\"background-color:#dadada\"><b>Serial Number</b></td><td>" << usb_serial_number
             << "</td></tr><tr><td style=\"background-color:#dadada\"><b>Product Name</b></td><td>" << usb_product_name
             << "</td></tr><tr><td style=\"background-color:#dadada\"><b>Manufacturer</b></td><td>" << usb_manufacturer
